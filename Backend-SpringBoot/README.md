@@ -1,95 +1,24 @@
-# Clean Architecture en SpringBoot
+# Clean Architecture en Spring Boot
+
+Backend con Spring Boot y Gradle. Genera datos simulados con JavaFaker y documenta la API con Swagger (springdoc).
 
 ```
 src/main/java/uceva/cleanarchitecture
-│
-├── domain
-│   ├── entity/
-│   │   ├── User.java
-│   │   └── Product.java
-│   │
-│   └── repository/
-│       ├── UserRepository.java
-│       └── ProductRepository.java
-│
-├── application
-│   └── usecase/
-│       ├── GetAllUsersUseCase.java
-│       └── GetAllProductsUseCase.java
-│
-├── infrastructure
-│   ├── controller/
-│   │   ├── UserController.java
-│   │   └── ProductController.java
-│   │
-│   ├── repository/
-│   │   ├── UserRepositoryImpl.java
-│   │   └── ProductRepositoryImpl.java
-│   │
-│   └── datasource/
-│       ├── UserDatasource.java
-│       └── ProductDatasource.java
-│
-├── config
-│   └── AppConfig.java
-│
-└── UcevaSprinBootTallerCleanArchitectureApplication.java
+├── domain          entity y repository (contratos)
+├── application     usecase
+├── infrastructure  datasource, repository y controller
+└── config          AppConfig (inyección de dependencias) y CorsConfig
 ```
 
+## Ejecución
 
-## Paso 1 - Crear Entidades
+Requiere Java 21. En esta carpeta: `.\gradlew bootRun` (Linux/Mac: `./gradlew bootRun`). Puerto 8080 con ruta base `/api`.
 
-```
-src/main/java/uceva/cleanarchitecture/domain/entity
-├── User.java
-└── Product.java
-```
+## URLs
 
-## Paso 2 - Crear Repositorios
+- Swagger: `http://localhost:8080/api/docs`
+- `http://localhost:8080/api/categories/{count}`
+- `http://localhost:8080/api/suppliers/{count}`
+- `http://localhost:8080/api/orders/{count}`
 
-```
-src/main/java/uceva/cleanarchitecture/domain/repositories/
-├── UserRepository.java
-└── ProductRepository.java
-```
-
-## Paso 3 - Crear Casos de Uso
-
-```
-src/main/java/uceva/cleanarchitecture/application/usecase/
-├── GetAllUsersUseCase.java
-└── GetAllProductsUseCase.java
-```
-
-## Paso 4 - Crear Controllers
-
-
-```
-src/main/java/uceva/cleanarchitecture/infrastructure/controllers/
-├── UserController.java
-└── ProductController.java
-```
-
-## Paso 5 - Crear Repositorios Implementadores
-
-```
-src/main/java/uceva/cleanarchitecture/infrastructure/repository/
-├── UserRepositoryImpl.java
-└── ProductRepositoryImpl.java
-```
-
-## Paso 6 - Agregar la Inyección de Dependencias
-
-```
-src/main/java/uceva/cleanarchitecture/config/
-└── AppConfig.java
-```
-
-# Funcionamiento del Backend
-
-## Urls Consumo
-```
-http://localhost:3000/api/swagger-ui/index.html
-http://localhost:8080/api/users/{countUsers}
-http://localhost:8080/api/products/{countProducts}
-```
+`{count}` debe ser un entero entre 1 y 100; en otro caso responde 400.
