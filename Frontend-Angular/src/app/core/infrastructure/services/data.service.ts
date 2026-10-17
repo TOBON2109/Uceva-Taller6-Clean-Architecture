@@ -1,202 +1,100 @@
-import { HttpClient } from "@angular/common/http";
-import { inject, Injectable } from "@angular/core";
+import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import { faker } from '@faker-js/faker';
-import { Observable, of } from "rxjs";
-import { environment } from "../../../../environments/environment";
-import { Product, ProductCategory } from "../../domain/models/product.model";
-import { User, UserEngineering } from "../../domain/models/user.model";
+import { Observable, of } from 'rxjs';
+import { environment } from '../../../../environments/environment';
+import { Category, CategoryState } from '../../domain/models/category.model';
+import { Supplier, SupplierType } from '../../domain/models/supplier.model';
+import { Order, OrderStatus } from '../../domain/models/order.model';
 
 /**
- * Servicio de infraestructura para obtención de datos.
+ * Servicio de acceso a datos.
  *
  * @remarks
- * Esta clase pertenece a la **capa de Infrastructure** y actúa
- * como un **Data Source** que provee información desde
- * diferentes orígenes:
- *
- * - Datos locales simulados (mocks)
- * - Backend Node.js mediante HTTP
- *
- * ❗ No contiene lógica de negocio.
- * ❗ No debe ser consumido directamente por los casos de uso.
- *
- * Es utilizado por repositorios o servicios de infraestructura
- * que adaptan los datos al dominio.
+ * Forma parte de la **capa de Infrastructure**. Centraliza las tres fuentes
+ * de datos: local (Faker en el navegador), backend Node.js y backend Spring Boot.
+ * Solo lo usan las implementaciones de los repositorios.
  */
 @Injectable({ providedIn: 'root' })
 export class DataService {
-    /**
-     * Cliente HTTP de Angular.
-     *
-     * @remarks
-     * Se inyecta mediante la API `inject()` de Angular
-     * para evitar el uso de constructores explícitos.
-     */
-    private httpClient = inject(HttpClient);
-    /**
-     * URL base del backend Node.js.
-     *
-     * @remarks
-     * Se construye a partir de la configuración de entorno
-     * definida en `environment`.
-     */
-    private nodeUrl = `${environment.baseUrlNode}/api`;
-    /**
-     * URL base del backend SpringBoot.
-     *
-     * @remarks
-     * Se construye a partir de la configuración de entorno
-     * definida en `environment`.
-     */
-    private springBootUrl = `${environment.baseUrlSpringBoot}/api`;
+  private httpClient = inject(HttpClient);
+  private nodeUrl = environment.baseUrlNode + '/api';
+  private springBootUrl = environment.baseUrlSpringBoot + '/api';
 
+  getAllCategoriesLocal(countCategories: number): Observable<Category[]> {
+    const stateValues: CategoryState[] = ['Activa', 'Inactiva'];
+    const categories: Category[] = [];
 
-    /**
-     * Obtiene el listado de USUARIOS desde datos locales simulados.
-     *
-     *
-     * @param countUsers - Cantidad de usuarios a solicitar
-     * @returns Observable que emite un arreglo de {@link User}
-     */
-    getAllUsersLocal(countUsers: number): Observable<User[]> {
-        const users: User[] = [];
-        const userEngineerings: UserEngineering[] = [
-            'Sistemas',
-            'Electronica',
-            'Biomedica',
-            'Industrial',
-            'Ambiental',
-        ];
-
-        for(let i = 1 ; i <= countUsers ; i++){
-            users.push({
-                id: i,
-                name: faker.person.firstName(),
-                lastName: faker.person.lastName(),
-                age: faker.number.int({ min: 18, max: 65 }),
-                email: faker.internet.email(),
-                engineering: faker.helpers.arrayElement(userEngineerings),
-            })
-        }
-
-        return of(users);
+    for (let i = 1; i <= countCategories; i++) {
+      categories.push({
+        id: i,
+        name: faker.commerce.department(),
+        description: faker.commerce.productDescription(),
+        productsCount: faker.number.int({ min: 1, max: 200 }),
+        state: faker.helpers.arrayElement(stateValues),
+      });
     }
 
-    /**
-     * Obtiene el listado de productos desde datos locales simulados.
-     *
-     * @param countProducts - Cantidad de productos a solicitar
-     * @returns Observable que emite un arreglo de {@link Product}
-     */
-    getAllProductsLocal(countProducts: number): Observable<Product[]> {
-        const products: Product[] = [];
-        const productCategories: ProductCategory[] = [
-            'Carnes',
-            'Frutas',
-            'Lacteos',
-            'Verduras'
-        ];
-        for(let i = 1; i <= countProducts ; i++){
-            products.push({
-                id: i,
-                name: faker.commerce.productName(),
-                price: Number(
-                    faker.commerce.price({ min: 1, max: 100, dec: 2 })
-                ),
-                category: faker.helpers.arrayElement(productCategories),
-            })
-        }
-        return of(products);
+    return of(categories);
+  }
+
+  getAllCategoriesNode(countCategories: number): Observable<Category[]> {
+    return this.httpClient.get<Category[]>(this.nodeUrl + '/categories/' + countCategories);
+  }
+
+  getAllCategoriesSpringBoot(countCategories: number): Observable<Category[]> {
+    return this.httpClient.get<Category[]>(this.springBootUrl + '/categories/' + countCategories);
+  }
+
+  getAllSuppliersLocal(countSuppliers: number): Observable<Supplier[]> {
+    const typeValues: SupplierType[] = ['Nacional', 'Internacional'];
+    const suppliers: Supplier[] = [];
+
+    for (let i = 1; i <= countSuppliers; i++) {
+      suppliers.push({
+        id: i,
+        company: faker.company.name(),
+        email: faker.internet.email(),
+        phone: faker.phone.number(),
+        city: faker.location.city(),
+        type: faker.helpers.arrayElement(typeValues),
+      });
     }
 
-    /**
-     * Obtiene el listado de usuarios desde el backend Node.js.
-     *
-     * @remarks
-     * Realiza una petición HTTP GET al endpoint
-     * `/users/{countUsers}`.
-     *
-     * El número de usuarios a obtener se define
-     * mediante el parámetro `countUsers`.
-     *
-     * @param countUsers - Cantidad de usuarios a solicitar
-     * @returns Observable que emite un arreglo de {@link User}
-     *
-     * @example
-     * ```ts
-     * this.dataService.getAllUsersNode(10).subscribe(users => {
-     *   console.log(users);
-     * });
-     * ```
-     */
-    getAllUsersNode(countUsers: number): Observable<User[]> {
-        return this.httpClient.get<User[]>(`${this.nodeUrl}/users/${countUsers}`);
+    return of(suppliers);
+  }
+
+  getAllSuppliersNode(countSuppliers: number): Observable<Supplier[]> {
+    return this.httpClient.get<Supplier[]>(this.nodeUrl + '/suppliers/' + countSuppliers);
+  }
+
+  getAllSuppliersSpringBoot(countSuppliers: number): Observable<Supplier[]> {
+    return this.httpClient.get<Supplier[]>(this.springBootUrl + '/suppliers/' + countSuppliers);
+  }
+
+  getAllOrdersLocal(countOrders: number): Observable<Order[]> {
+    const statusValues: OrderStatus[] = ['Pendiente', 'Enviado', 'Entregado', 'Cancelado'];
+    const orders: Order[] = [];
+
+    for (let i = 1; i <= countOrders; i++) {
+      orders.push({
+        id: i,
+        customer: faker.person.fullName(),
+        product: faker.commerce.productName(),
+        quantity: faker.number.int({ min: 1, max: 20 }),
+        total: Number(faker.commerce.price({ min: 10, max: 5000, dec: 2 })),
+        status: faker.helpers.arrayElement(statusValues),
+      });
     }
 
-    /**
-     * Obtiene el listado de productos desde el backend Node.js.
-     *
-     * @remarks
-     * Realiza una petición HTTP GET al endpoint
-     * `/products/{countProducts}`.
-     *
-     * @param countProducts - Cantidad de productos a solicitar
-     * @returns Observable que emite un arreglo de {@link Product}
-     *
-     * @example
-     * ```ts
-     * this.dataService.getAllProductsNode(5).subscribe(products => {
-     *   console.log(products);
-     * });
-     * ```
-     */
-    getAllProductsNode(countProducts: number): Observable<Product[]> {
-        return this.httpClient.get<Product[]>(`${this.nodeUrl}/products/${countProducts}`);
-    }
+    return of(orders);
+  }
 
-    /**
-     * Obtiene el listado de usuarios desde el backend SpringBoot.
-     *
-     * @remarks
-     * Realiza una petición HTTP GET al endpoint
-     * `/users/{countUsers}`.
-     *
-     * El número de usuarios a obtener se define
-     * mediante el parámetro `countUsers`.
-     *
-     * @param countUsers - Cantidad de usuarios a solicitar
-     * @returns Observable que emite un arreglo de {@link User}
-     *
-     * @example
-     * ```ts
-     * this.dataService.getAllUsersSpringBoot(10).subscribe(users => {
-     *   console.log(users);
-     * });
-     * ```
-     */
-    getAllUsersSpringBoot(countUsers: number): Observable<User[]> {
-        return this.httpClient.get<User[]>(`${this.springBootUrl}/users/${countUsers}`);
-    }
+  getAllOrdersNode(countOrders: number): Observable<Order[]> {
+    return this.httpClient.get<Order[]>(this.nodeUrl + '/orders/' + countOrders);
+  }
 
-    /**
-     * Obtiene el listado de productos desde el backend SpringBoot.
-     *
-     * @remarks
-     * Realiza una petición HTTP GET al endpoint
-     * `/products/{countProducts}`.
-     *
-     * @param countProducts - Cantidad de productos a solicitar
-     * @returns Observable que emite un arreglo de {@link Product}
-     *
-     * @example
-     * ```ts
-     * this.dataService.getAllProductsSpringBoot(5).subscribe(products => {
-     *   console.log(products);
-     * });
-     * ```
-     */
-    getAllProductsSpringBoot(countProducts: number): Observable<Product[]> {
-        return this.httpClient.get<Product[]>(`${this.springBootUrl}/products/${countProducts}`);
-    }
-
+  getAllOrdersSpringBoot(countOrders: number): Observable<Order[]> {
+    return this.httpClient.get<Order[]>(this.springBootUrl + '/orders/' + countOrders);
+  }
 }

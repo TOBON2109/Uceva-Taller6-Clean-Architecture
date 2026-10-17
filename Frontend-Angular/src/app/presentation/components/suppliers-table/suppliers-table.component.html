@@ -1,0 +1,29 @@
+<table class="table table-striped border">
+	<thead>
+		<tr>
+			<th scope="col">Id</th>
+			<th scope="col">Empresa</th>
+			<th scope="col">Correo</th>
+			<th scope="col">Teléfono</th>
+			<th scope="col">Ciudad</th>
+			<th scope="col">Tipo</th>
+		</tr>
+	</thead>
+	<tbody>
+		@for (supplier of suppliers; track supplier.id) {
+			<tr>
+				<th scope="row">{{ supplier.id }}</th>
+				<td>{{ supplier.company }}</td>
+				<td>{{ supplier.email }}</td>
+				<td>{{ supplier.phone }}</td>
+				<td>{{ supplier.city }}</td>
+				<td>
+					<dsb-badge-atom
+						[text]="supplier.type"
+						[type]="typeMap[supplier.type]" >
+					</dsb-badge-atom>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

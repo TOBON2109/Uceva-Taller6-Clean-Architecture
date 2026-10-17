@@ -1,128 +1,33 @@
 # Clean Architecture en Angular
 
+Frontend con tres módulos funcionales (Categorías, Proveedores y Pedidos) que consumen un backend de Node.js o de Spring Boot.
+
 ```
 src/app
-│
 ├── core
-│   ├── domain
-│   │   ├── models
-│   │   │   ├── user.model.ts
-│   │   │   └── product.model.ts
-│   │   └── repositories
-│   │       ├── user.repository.ts
-│   │       └── product.repository.ts
-│   │
-│   ├── application
-│   │   └── use-cases
-│   │       ├── get-all-users.usecase.ts
-│   │       ├── get-user-by-id.usecase.ts
-│   │       ├── get-all-products.usecase.ts
-│   │       └── get-product-by-id.usecase.ts
-│   │
-│   └── infrastructure
-│       ├── services
-│       │   ├── user-api.service.ts
-│       │   └── product-api.service.ts
-│       └── repositories
-│           ├── user.repository.impl.ts
-│           └── product.repository.impl.ts
-│
-├── presentation
-│   ├── users
-│   └── products
-│
-└── app.config.ts
+│   ├── domain          models y repositories (contratos)
+│   ├── application     usecases (get-all-categories / suppliers / orders)
+│   └── infrastructure  services (data.service.ts) y repositories (local, node, springboot)
+├── presentation        pages, components (alert y tablas) e interfaces
+├── mocks
+├── app.config.ts       Providers: selección de la implementación
+├── app.routes.ts       Rutas de los tres módulos
+└── app.ts              Navbar
 ```
 
+Los componentes usan únicamente los casos de uso; nunca el `DataService` ni las APIs.
 
-## Paso 1 - Crear Modelos
+## Ejecución
 
-```
-src/app/core/domain/models/
-├── user.model.ts
-└── product.model.ts
-```
+- `npm i`
+- `npm start` (abre `http://localhost:4200`)
+- Requiere el backend activo según el bloque de Providers de `app.config.ts` (Node.js en el 3000 o Spring Boot en el 8080).
 
-## Paso 2 - Crear Repositorios
+## Cambiar de backend
 
-```
-src/app/core/domain/repositories/
-├── user.repository.ts
-└── product.repository.ts
-```
+En `src/app/app.config.ts` deja activo un solo bloque de providers: **Local**, **Node** o **SpringBoot**.
 
-## Paso 3 - Crear Casos de Uso
+## Pruebas y documentación
 
-### User
-```
-src/app/core/application/usecases/user/
-├── get-all-users.usecase.ts
-└── get-user-by-id.usecase.ts
-```
-
-### Product
-```
-src/app/core/application/usecases/product/
-├── get-all-products.usecase.ts
-└── get-product-by-id.usecase.ts
-```
-
-## Paso 4 - Crear Servicios
-
-
-```
-src/app/core/infrastructure/services/
-├── user.service.ts
-└── product.service.ts
-```
-
-## Paso 5 - Crear Repositorios Implementadores
-
-### Implementación para Consumo de Datos Local
-```
-src/app/core/infrastructure/repositories/local
-├── user-local.repository.impl.ts
-└── product-local.repository.impl.ts
-```
-
-### Implementación para Consumo de Datos NodeJS
-```
-src/app/core/infrastructure/repositories/node
-├── user-node.repository.impl.ts
-└── product-node.repository.impl.ts
-```
-
-## Paso 6 - Agregar Providers con sus Implementadores
-
-```
-src/app/
-└── app.config.ts
-```
-
-# Funcionamiento del Frontend
-
-## Ejecutar Frontend
-```
-npm run start
-```
-
-## Urls Consumo
-
-### Frontend
-```
-http://localhost:4200
-```
-
-### Backend NodeJS
-```
-http://localhost:3000/api/docs
-http://localhost:3000/api/users/{countUsers}
-http://localhost:3000/api/products/{countProducts}
-```
-
-### Backend SpringBoot
-```
-http://localhost:3000/api/swagger-ui/index.html
-http://localhost:3000/api/users/{countUsers}
-http://localhost:3000/api/products/{countProducts}
-```
+- `npm test`: Jest con reporte de cobertura (superior al 90%).
+- `npm run compodoc`: genera la documentación técnica.
