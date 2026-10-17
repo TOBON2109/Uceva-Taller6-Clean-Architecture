@@ -22,7 +22,7 @@ export const swaggerSpec = swaggerJsdoc({
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'API Client Server NodeJS',
+      title: 'API Clean Architecture NodeJS',
       version: '1.0.0',
       description: 'Documentación de la API con Swagger',
     },

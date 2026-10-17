@@ -1,103 +1,30 @@
-# Clean Architecture en NodeJS
+# Clean Architecture en Node.js
+
+Backend con Express y TypeScript. Genera datos simulados con Faker y documenta la API con Swagger.
 
 ```
 src
-├── domain
-│   ├── models
-│   │   ├── user.entity.ts
-│   │   └── product.entity.ts
-│   └── repositories
-│       ├── user.repository.ts
-│       └── product.repository.ts
-│
-├── application
-│   └── use-cases
-│       ├── get-all-users.usecase.ts
-│       └── get-all-products.usecase.ts
-│
+├── domain          models y repositories (contratos)
+├── application     usecases
 ├── infrastructure
-│   ├── controllers
-│   │   ├── user.controller.ts
-│   │   └── product.controller.ts
-│   ├── repositories
-│   │   ├── user.repository.impl.ts
-│   │   └── product.repository.impl.ts
-│   ├── datasources
-│   │   ├── user.datasource.ts
-│   │   └── product.datasource.ts
-│   └── web
-│       ├── config/
-│       ├── errors/
-│       ├── interfaces/
-│       ├── controllers/
-│       ├── routes/
-│       └── server.ts
-│
+│   ├── datasources     Faker
+│   ├── repositories    implementaciones
+│   └── web             controllers, routes (composición global), config y erros
 └── app.ts
 ```
 
-## Paso 1 - Crear Modelos
+La inyección de dependencias se hace en `web/routes/*.routes.ts` (datasource → repositorio → caso de uso → controlador) y `routes.ts` las agrupa para toda la aplicación.
 
-```
-src//domain/models/
-├── user.model.ts
-└── product.model.ts
-```
+## Ejecución
 
-## Paso 2 - Crear Repositorios
+- `npm i`
+- `npm run start` (puerto 3000)
 
-```
-src/domain/repositories/
-├── user.repository.ts
-└── product.repository.ts
-```
+## URLs
 
-## Paso 3 - Crear Casos de Uso
+- Swagger: `http://localhost:3000/api/docs`
+- `http://localhost:3000/api/categories/{count}`
+- `http://localhost:3000/api/suppliers/{count}`
+- `http://localhost:3000/api/orders/{count}`
 
-```
-src/application/usecases/
-├── get-all-users.usecase.ts
-└── get-all-products.usecase.ts
-```
-
-## Paso 4 - Crear Datasources
-
-```
-src/infrastructure/datasource/
-├── user.datasource.ts
-└── product.datasource.ts
-```
-
-## Paso 5 - Crear Repositorios Implementadores
-
-```
-src/infrastructure/repositories/
-├── user.repository.impl.ts
-└── product.repository.impl.ts
-```
-
-## Paso 6 - Implementar Web (Express – Framework Externo)
-
-```
-src/infrastructure/web/
-├── config/
-├── errors/
-├── interfaces/
-├── controllers/
-├── routes/
-└── server.ts
-```
-
-# Funcionamiento del Backend
-
-## Ejecutar Backend
-```
-npm run start
-```
-
-## Urls Consumo
-```
-http://localhost:3000/api/docs
-http://localhost:3000/api/users/{countUsers}
-http://localhost:3000/api/products/{countProducts}
-```
+`{count}` debe ser un entero entre 1 y 100; en otro caso responde 400.

@@ -2,73 +2,111 @@
  * @openapi
  * components:
  *   schemas:
- *     User:
+ *     Category:
  *       type: object
- *       description: Representa un usuario del sistema
+ *       description: Representa un categoría del sistema
  *       required:
  *         - id
  *         - name
- *         - lastName
- *         - age
- *         - email
- *         - engineering
+ *         - description
+ *         - productsCount
+ *         - state
  *       properties:
  *         id:
  *           type: number
  *           example: 1
  *         name:
  *           type: string
- *           example: Carlos
- *         lastName:
+ *           example: Electrónica
+ *         description:
  *           type: string
- *           example: Ramírez
- *         age:
+ *           example: Equipos y accesorios
+ *         productsCount:
  *           type: number
- *           example: 22
- *         email:
- *           type: string
- *           format: email
- *           example: carlos.ramirez@example.com
- *         engineering:
+ *           example: 45
+ *         state:
  *           type: string
  *           enum:
- *             - Sistemas
- *             - Electronica
- *             - Biomedica
- *             - Industrial
- *             - Ambiental
- *           example: Sistemas
+ *             - Activa
+ *             - Inactiva
+ *           example: Activa
  */
 
 /**
  * @openapi
  * components:
  *   schemas:
- *     Product:
+ *     Supplier:
  *       type: object
- *       description: Representa un producto del sistema
+ *       description: Representa un proveedor del sistema
  *       required:
  *         - id
- *         - name
- *         - category
- *         - price
+ *         - company
+ *         - email
+ *         - phone
+ *         - city
+ *         - type
  *       properties:
  *         id:
  *           type: number
  *           example: 1
- *         name:
+ *         company:
  *           type: string
- *           example: Leche entera
- *         category:
+ *           example: Distribuidora Tech
+ *         email:
+ *           type: string
+ *           example: ventas@tech.com
+ *         phone:
+ *           type: string
+ *           example: 3001234567
+ *         city:
+ *           type: string
+ *           example: Tuluá
+ *         type:
  *           type: string
  *           enum:
- *             - Lacteos
- *             - Carnes
- *             - Frutas
- *             - Verduras
- *           example: Lacteos
- *         price:
+ *             - Nacional
+ *             - Internacional
+ *           example: Nacional
+ */
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     Order:
+ *       type: object
+ *       description: Representa un pedido del sistema
+ *       required:
+ *         - id
+ *         - customer
+ *         - product
+ *         - quantity
+ *         - total
+ *         - status
+ *       properties:
+ *         id:
  *           type: number
- *           example: 4500
+ *           example: 1
+ *         customer:
+ *           type: string
+ *           example: Carlos Ramírez
+ *         product:
+ *           type: string
+ *           example: Teclado mecánico
+ *         quantity:
+ *           type: number
+ *           example: 3
+ *         total:
+ *           type: number
+ *           example: 360.5
+ *         status:
+ *           type: string
+ *           enum:
+ *             - Pendiente
+ *             - Enviado
+ *             - Entregado
+ *             - Cancelado
+ *           example: Pendiente
  */
 export {};
