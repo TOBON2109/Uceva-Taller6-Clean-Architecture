@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+.angular/
+documentation/
+build/
+.gradle/
+target/
+.vscode/
+.idea/
